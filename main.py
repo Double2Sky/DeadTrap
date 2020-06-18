@@ -1,6 +1,4 @@
 import os
-from os.path import join,dirname
-from dotenv import load_dotenv
 import selenium
 import requests
 from selenium import webdriver
@@ -22,9 +20,7 @@ from Info.google import trace
 from Info.googlemaps import maps
 from Style.banner import banner
 
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
-api_key = os.getenv('NUMVERIFY_API_KEY')
+api_key = '86191f43c035c6da6744113acdf7f9ea'
 n = []
 
 class colors:
@@ -144,11 +140,11 @@ else:
 
     time.sleep(20)
     email = browser.find_element_by_css_selector('#i0116')
-    email.send_keys(os.getenv('EMAIL_ADDRESS'), Keys.ENTER)
+    email.send_keys('anonsurf69@outlook.com', Keys.ENTER)
 
     time.sleep(20)
     password = browser.find_element_by_css_selector('#i0118')
-    password.send_keys(os.getenv('EMAIL_PASSWORD'), Keys.ENTER)
+    password.send_keys('Hsvmq2jvgz', Keys.ENTER)
     
     time.sleep(30)
     print(colors.red+"\nInfo Scan\n"+colors.red)
