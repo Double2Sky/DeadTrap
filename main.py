@@ -20,7 +20,6 @@ from Info.google import trace
 from Info.googlemaps import maps
 from Style.banner import banner
 
-api_key = '86191f43c035c6da6744113acdf7f9ea'
 n = []
 
 class colors:
@@ -97,7 +96,7 @@ for x in line_1:
     sys.stdout.flush()
     time.sleep(0.1)
 
-request = requests.get(f'http://apilayer.net/api/validate?access_key={api_key}&number={query}')
+request = requests.get(f'http://apilayer.net/api/validate?access_key=a65976cc48a83b234e1b7177d0b3840f&number={query}')
 answer = json.loads(request.text) 
 
 optionss = webdriver.FirefoxOptions()
