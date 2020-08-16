@@ -110,7 +110,7 @@ def get_config():
 
 
 def query_numverify(numverify_api_key, phone_number):
-    response = requests.get(f'http://apilayer.net/api/validate?access_key={numverify_api_key}&number={query}')
+    response = requests.get(f'http://apilayer.net/api/validate?access_key={numverify_api_key}&number={phone_number}')
 
     if response.status_code != 200:
         raise Exception(f"Got HTTP status code {response.status_code} from numverify API")
