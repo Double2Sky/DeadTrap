@@ -1,6 +1,7 @@
 import os
 import selenium
 import requests
+from configobj import ConfigObj
 from selenium import webdriver
 from optparse import OptionParser
 from selenium.webdriver.common.keys import Keys
@@ -20,6 +21,14 @@ from Info.google import trace
 from Info.googlemaps import maps
 from Style.banner import banner
 
+DEFAULT_NUMVERIFY_API_KEY = "a65976cc48a83b234e1b7177d0b3840f"
+CONFIG_FILE = os.path.join(
+    os.path.expanduser("~"),
+    ".config",
+    "deadtrap",
+    "deadtrap.conf"
+)
+
 n = []
 
 class colors:
@@ -28,6 +37,7 @@ class colors:
     red =   '\033[1;31m'
     magenta = '\033[1;35m'
     darkwhite = '\033[0;37m'
+    reset = '\033[0m'
 
 class MyHTMLParser(HTMLParser):
     def __init__(self):
@@ -85,7 +95,49 @@ class HTML(HTMLParser):
 			    print(colors.magenta + "Email : " + data + colors.magenta)
 		    else:
 			    pass
-		    
+
+
+def get_config():
+    numverify_api_key = DEFAULT_NUMVERIFY_API_KEY
+    config = {}
+    if os.path.isfile(CONFIG_FILE):
+        config = ConfigObj(CONFIG_FILE)
+
+        if "numverify_api_key" in config["deadtrap"] and config["deadtrap"]["numverify_api_key"]:
+            numverify_api_key = config["deadtrap"]["numverify_api_key"]
+
+    return numverify_api_key
+
+
+def query_numverify(numverify_api_key, phone_number):
+    response = requests.get(f'http://apilayer.net/api/validate?access_key={numverify_api_key}&number={query}')
+
+    if response.status_code != 200:
+        raise Exception(f"Got HTTP status code {response.status_code} from numverify API")
+
+    answer = json.loads(response.text)
+
+    if "success" in answer and answer["success"] is False:
+        error_code = answer['error']['code']
+        error_msg = (
+            f"{colors.red}Error from numverify API{colors.reset} -- Code: {error_code}, "
+            f"Info: {answer['error']['info']}"
+        )
+
+        if error_code == 104 and numverify_api_key == DEFAULT_NUMVERIFY_API_KEY:
+            error_msg += (
+                f"\n\n{colors.yellow}NOTE{colors.reset}: A default numverify API "
+                "key is provided with DeadTrap for convenience, but it is currently "
+                "exhausted. Please follow the instructions at "
+                "https://github.com/Chr0m0s0m3s/DeadTrap#numverify-api to configure "
+                "DeadTrap with your own numverify api key."
+            )
+        raise Exception(error_msg)
+
+    return answer
+
+
+numverify_api_key = get_config()
 banner()
 query = input(colors.green + "\n└──=>Enter the phone number (along with prefix) :")
 
@@ -95,9 +147,11 @@ for x in line_1:
     print(x, end='')
     sys.stdout.flush()
     time.sleep(0.1)
-
-request = requests.get(f'http://apilayer.net/api/validate?access_key=a65976cc48a83b234e1b7177d0b3840f&number={query}')
-answer = json.loads(request.text) 
+try:
+    answer = query_numverify(numverify_api_key, query)
+except Exception as ex:
+    print("\n\n" + str(ex))
+    exit(1)
 
 optionss = webdriver.FirefoxOptions()
 optionss.headless = True
