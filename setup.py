@@ -1,47 +1,35 @@
-import os, math, sys
-from pathlib import Path
+import os
 
-OS_bit = (round(math.log(sys.maxsize,2)+1))  
-
-os.system("sudo apt install python3-pip")   
-os.system("pip3 install -U selenium")
-os.system("pip3 install -U bs4")
-
-print("\n \n {} \n \n".format(OS_bit))
+import setuptools
 
 
-os.system('firefox -v > tmp')                  
-result   =  open('tmp', 'r').read()            
-marker   = result.find('Firefox') + 8          
-version  = result[marker:].splitlines()[0]     
-a,b,c = version.split(".")                     
-os.remove('tmp')                               
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
-FirefoxVersion = int(a)
-second = 0
 
-if FirefoxVersion  < 53:
-
-    first = 16
-    second = 1
-    OS_bit = 64
-
-elif FirefoxVersion == 53 or FirefoxVersion == 54:
-
-    first = 18
-
-elif FirefoxVersion > 54:
-
-    first = 26
-    
-geckodriver = Path("usr/local/bin/geckodriver")
-
-if geckodriver.is_file():
-    print("geckodriver is preinstalled")
-else:
-    print("Installing geckodriver")
-    os.system("wget https://github.com/mozilla/geckodriver/releases/download/v0.{}.{}/geckodriver-v0.{}.{}-linux{}.tar.gz".format(first,second,first,second,OS_bit))
-    os.system("tar -xvzf geckodriver-v0.{}.{}-linux{}.tar.gz".format(first,second,OS_bit))
-    os.system("rm geckodriver-v0.{}.{}-linux{}.tar.gz".format(first,second,OS_bit))
-    os.system("chmod +x geckodriver")
-    os.system("sudo mv geckodriver /usr/local/bin/")
+setuptools.setup(
+    name="DeadTrap",
+    author="Chr0m0s0m3s",
+    description="An OSINT tool to track down footprints of a phone number",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/Chr0m0s0m3s/DeadTrap",
+    packages=setuptools.find_packages(),
+    license="MIT",
+    classifiers=[
+        "Programming Language :: Python :: 3"
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: Microsoft :: Windows :: Windows 10",
+        "Topic :: Security",
+    ],
+    install_requires=[
+        "selenium",
+        "bs4",
+        "configobj",
+        "requests",
+    ],
+    include_package_data=True,
+    python_requires=">=3.0",
+    entry_points={"console_scripts": ["deadtrap=deadtrap.__main__:main"]}
+)
