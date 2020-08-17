@@ -237,3 +237,6 @@ def main():
     print(trace(query))
     print("")
     browser.quit()
+
+if __name__ == "__main__":
+    main()
