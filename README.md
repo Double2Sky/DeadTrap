@@ -32,13 +32,7 @@ Gecko Driver download link : https://github.com/mozilla/geckodriver/releases
 
 ### Install with pip
 
-After installing the prerequisites, simply run `pip3 install .` to install DeadTrap:
-
-```
-git clone https://github.com/Chr0m0s0m3s/DeadTrap.git
-cd DeadTrap
-pip3 install .
-```
+After installing the prerequisites, simply run `pip3 install deadtrap` to install DeadTrap.
 
 ### Numverify API
 DeadTrap relies on the [numverify api](https://numverify.com/documentation) to discover
