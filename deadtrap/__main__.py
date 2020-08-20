@@ -136,6 +136,30 @@ def query_numverify(numverify_api_key, phone_number):
 
     return answer
 
+def query_truecaller(browser, phone_number, country_code):
+    browser.get(f"https://www.truecaller.com/search/{str(country_code).lower()}/{phone_number.replace('+91', '')}")
+
+
+    if browser.current_url == 'https://www.truecaller.com/auth/sign-in':
+        actionchains = ActionChains(browser)
+
+        click = browser.find_element_by_xpath('/html/body/div/main/div/a[2]')
+
+        actionchains.move_to_element(click).click().perform()
+
+        time.sleep(20)
+        email = browser.find_element_by_css_selector('#i0116')
+        email.send_keys('rubenrobinson82@outlook.com', Keys.ENTER)
+
+        time.sleep(20)
+        password = browser.find_element_by_css_selector('#i0118')
+        password.send_keys('mq2jvgzH', Keys.ENTER)
+
+        time.sleep(30)
+
+    parser = MyHTMLParser()
+    parser.feed(browser.page_source)
+
 def main():
     numverify_api_key = get_config()
     banner()
@@ -160,50 +184,18 @@ def main():
 
     browser = webdriver.Firefox(options=optionss)
 
-    browser.get(f"https://www.truecaller.com/search/{str(answer['country_code']).lower()}/{query.replace('+91', '')}")
-
     parse = HTML()
 
-    parser = MyHTMLParser()
 
-    if browser.current_url != 'https://www.truecaller.com/auth/sign-in':
-        print(colors.red+"\nInfo Scan\n"+colors.red)
-        print(colors.red+"------------------------"+colors.red)
-        parser.feed(browser.page_source)
-        print(colors.green+f'''
-    Valid : {str(answer['valid'])}
-    Number: {str(answer['number'])}
-    Local Format: {str(answer['local_format'])}
-    International Format: {str(answer['international_format'])}
-    Country Prefix: {str(answer['country_prefix'])}
-    Country Code: {str(answer['country_code'])}
-    Country Name: {str(answer['country_name'])}
-    Location: {str(answer['location'])}
-    Maps : {maps(str(answer['location']))}
-    Carrier: {str(answer['carrier'])}
-    Line Type: {str(answer['line_type'])}'''+colors.green)
-        
-    else:
-        
-        actionchains = ActionChains(browser)
+    print(colors.red+"\nInfo Scan\n"+colors.red)
+    print(colors.red+"------------------------"+colors.red)
 
-        click = browser.find_element_by_xpath('/html/body/div/main/div/a[2]')
+    try:
+        query_truecaller(browser, query, answer['country_code'])
+    except Exception as ex:
+        print(colors.yellow + "\n\nWARNING: " + colors.reset + "Failed to query truecaller.com: " + str(ex))
 
-        actionchains.move_to_element(click).click().perform()
-
-        time.sleep(20)
-        email = browser.find_element_by_css_selector('#i0116')
-        email.send_keys('rubenrobinson82@outlook.com', Keys.ENTER)
-
-        time.sleep(20)
-        password = browser.find_element_by_css_selector('#i0118')
-        password.send_keys('mq2jvgzH', Keys.ENTER)
-        
-        time.sleep(30)
-        print(colors.red+"\nInfo Scan\n"+colors.red)
-        print(colors.red+"------------------------"+colors.red)
-        parser.feed(browser.page_source)
-        print(colors.green+f'''
+    print(colors.green+f'''
     Valid : {str(answer['valid'])}
     Number: {str(answer['number'])}
     Local Format: {str(answer['local_format'])}
